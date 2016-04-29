@@ -72,6 +72,10 @@ app.get('/dump', function(req, res)
     console.log("dumped dht");
 });
 
+app.get('/', function(req, res) {
+    res.redirect('/dump');
+});
+
 app.listen(3000, function ()
 {
   console.log("HashTable Server listening on port: 3000");
