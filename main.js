@@ -66,6 +66,12 @@ app.post('/put', function(req, res)
     console.log("Wrote value for: " + id);
 });
 
+app.get('/dump', function(req, res)
+{
+    res.end(JSON.stringify(dht));
+    console.log("dumped dht");
+});
+
 app.listen(3000, function ()
 {
   console.log("HashTable Server listening on port: 3000");
