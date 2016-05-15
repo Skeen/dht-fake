@@ -1,5 +1,6 @@
 var express = require('express');
 var bodyParser = require('body-parser')
+var Triejs = require('triejs');
 
 var app = express();
 
@@ -14,7 +15,7 @@ var allowCrossDomain = function(req, res, next)
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(allowCrossDomain);
 
-var dht = {};
+var trie = new Triejs({enableCache: false});
 
 app.get('/get', function(req, res)
 {
@@ -25,15 +26,14 @@ app.get('/get', function(req, res)
         res.end("Error: Please provide an id!");
         return;
     }
-
-    var value = dht[id];
-    if(!value)
+    var result = trie.find(id);
+    if(!result)
     {
         res.status(404);
         res.end("Error: No value found!");
         return;
     }
-    res.send(value);
+    res.send(result);
     console.log("Replied with value for: " + id);
 });
 
@@ -54,18 +54,18 @@ app.post('/put', function(req, res)
         res.end("Error: Please provide a value!");
         return;
     }
-
-    if(dht[id])
+    var removed = trie.remove(id);
+    trie.add(id, {key: id, value: value});
+    if(removed)
     {
         res.send("Warning: Overriding value!");
         console.log("Warning: Overriding value: " + id);
     }
- 
-    dht[id] = value;
     res.end("Success");
     console.log("Wrote value for: " + id);
 });
 
+/*
 app.get('/dump', function(req, res)
 {
     res.end(JSON.stringify(dht));
@@ -75,8 +75,9 @@ app.get('/dump', function(req, res)
 app.get('/', function(req, res) {
     res.redirect('/dump');
 });
+*/
 
 app.listen(3000, function ()
 {
-  console.log("HashTable Server listening on port: 3000");
+    console.log("Prefix-HashTable (trie) Server listening on port: 3000");
 });
