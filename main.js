@@ -55,7 +55,7 @@ app.post('/put', function(req, res)
         return;
     }
     var removed = trie.remove(id);
-    trie.add(id, {key: id, value: value});
+    trie.add(id, {key: id, value: JSON.parse(value)});
     if(removed)
     {
         res.send("Warning: Overriding value!");
